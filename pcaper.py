@@ -151,6 +151,44 @@ def analyzer():
     visualize.grid(row=2, column=0)
 
     
+    def get_url(packet):
+        if packet.haslayer(http.HTTPRequest):
+            url = packet[http.HTTPRequest].Host + packet[http.HTTPRequest].Path
+            return url
+
+    def get_login_info(packet):
+        if packet.haslayer(http.HTTPRequest):
+            if packet.haslayer(Raw):
+                load = packet[Raw].load
+                #load = str(load)
+                keybword = ["usr", "uname", "username", "pwd", "pass", "password"]
+                for eachword in keybword:
+                    if eachword.encode() in load:
+                        return load
+
+    def passwordFinder():
+        packets = rdpcap(menu.filename)
+
+        logins = {"URL": [], "Login Info": []}
+        for i in range(len(packets)):
+            if packets[i].haslayer(http.HTTPRequest):
+                url = get_url(packets[i]).decode('utf-8')
+                login_info = get_login_info(packets[i])
+                if login_info:
+                    logins['URL'].append(str(url))
+                    logins['Login Info'].append(login_info)
+
+        login_dataframe = pd.DataFrame(logins)
+        table_show = Toplevel()
+        table_show.title("Table Frame")
+        table_show.geometry("1000x600")
+        table = Table(table_show, dataframe=login_dataframe, showtoolbar=True, showstatusbar=True, width=1500, height=800)
+        table.show()
+
+        
+
+    http_password = Button(table_view, text="Find HTTP Password", command=passwordFinder)
+    http_password.grid(row=5, column=0)
 
 
 get_file = Button(menu, text="Open file", command=read_file)
