@@ -71,15 +71,34 @@ def analyzer():
 
 
 
-    def show_tables():
-        table_show = Toplevel()
-        table_show.title("Table Frame")
-        table_show.geometry("1000x600")
-        table = Table(table_show, dataframe=df, showtoolbar=True, showstatusbar=True, width=1500, height=800)
+    def show_IPs():
+        ip_show = Toplevel()
+        ip_show.title("Table Frame")
+        ip_show.geometry("1000x600")
+        cols = choosed_cols.get()
+        cols = cols.split()
+        table = Table(ip_show, dataframe=df[cols], showtoolbar=True, showstatusbar=True, width=1500, height=800)
         table.show()
 
-    analyze_file = Button(table_view, text="Show Table", command=show_tables)
-    analyze_file.grid(row=0, column=0)
+
+    choosed_cols = Entry(table_view)
+    choosed_cols.grid(row=9, column=0)
+
+    choosed_cols_button = Button(table_view, text="Choose columns", command=show_IPs)
+    choosed_cols_button.grid(row=11, column=0)
+
+    def show_columns():
+        show_cols = Toplevel()
+        show_cols.title("Columns Names")
+        cols = []
+        for i in range(len(df.columns)):
+            cols.append(df.columns[i])
+        cols = str(cols)
+        cols_label = Label(show_cols, text=cols)
+        cols_label.pack()
+        
+    show_cols_button = Button(table_view, text="Click here to show columns", command=show_columns)
+    show_cols_button.grid(row=12, column=0)
 
 
 
@@ -90,6 +109,9 @@ def analyzer():
 
     choose_graph = OptionMenu(table_view, choosed, 'Address Sending Payloads', 'Destination Adresses (Bytes Received)', 'Source Ports (Bytes Sent)', 'Destination Ports (Bytes Received)', 'History of bytes by most frequent address', 'Suspicious Destination' )
     choose_graph.grid(row=3, column=0)
+
+
+
 
 
 
@@ -189,6 +211,50 @@ def analyzer():
 
     http_password = Button(table_view, text="Find HTTP Password", command=passwordFinder)
     http_password.grid(row=5, column=0)
+
+
+    def summarize():
+        packets = rdpcap(menu.filename)
+        summary = Toplevel()
+        summary.title("Summary")
+        summary.geometry("1000x600")
+
+        frequent_address = df['src'].describe()['top']
+
+        filename = menu.filename
+        filename = filename.split("/")
+        filename = filename[-1]
+        x = f"""
+This file ({filename}) has {len(packets)} packets.
+
+Unique Source Addresses
+{df['src'].unique()}
+
+Unique Destination Addresses
+{df['dst'].unique()}
+
+Top Source Address
+{df['src'].describe()}
+
+Top Destination Address
+{df['dst'].describe()}
+
+# Who is Top Address Speaking to?"
+{df[df['src'] == frequent_address]['dst'].unique()}
+
+# Who is the top address speaking to (Destination Ports)
+{df[df['src'] == frequent_address]['dport'].unique()}
+
+# Who is the top address speaking to (Source Ports)
+{df[df['src'] == frequent_address]['sport'].unique()}
+"""
+
+        summary_text = Label(summary, text=x)
+        summary_text.pack()
+    summarizer = Button(table_view, text="Summarize Everything", command=summarize)
+    summarizer.grid(row=7, column=0)
+
+
 
 
 get_file = Button(menu, text="Open file", command=read_file)
