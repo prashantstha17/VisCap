@@ -2,16 +2,29 @@ import pandas as pd
 from tkinter import *
 from tkinter import filedialog
 from pandastable import Table
-import numpy as np
 import binascii
-import seaborn as sns
 from scapy.all import *
-from scapy.layers.l2 import Ether
 from scapy.layers.inet import IP
 from scapy.layers.inet import TCP
+from scapy.layers import http
 
-def full_table():
-    packets = rdpcap("test.pcap")
+menu = Tk()
+menu.title("Menu")
+menu.geometry("1000x600")
+
+
+def read_file():
+    global filename
+    menu.filename = filedialog.askopenfilename(initialdir="/home/x90/Documents/college/Year2/Programming And Algorithims/analyzed", title="Select a file")
+    print(menu.filename)
+
+
+def analyzer():
+    table_view = Toplevel()
+    table_view.title("Analyzed Pcap")
+    table_view.geometry("800x500")
+    packets = rdpcap(menu.filename)
+    
 
     ip_fields = [field.name for field in IP().fields_desc]
     tcp_fields = [field.name for field in TCP().fields_desc]
@@ -55,31 +68,95 @@ def full_table():
     df = df.reset_index()
     # Drop old index column
     df = df.drop(columns="index")
-    table = Table(frame, dataframe=df.head(), showtoolbar=True, showstatusbar=True, width=1500, height=800)
-    table.show()
-
-
-root = Tk()
-root.geometry("1500x800")
-frame = Frame(root)
-
-def get_file():
-    root.filename = filedialog.askopenfilename(initialdir="/home/x90/Documents/college/Year2/Programming And Algorithims/analyzed", title="Select a file")
-    packets = rdpcap(root.filename)
-    packets_length = Label(root, text="Total length of packet is "+ str(len(packets)))
-    packets_length.grid(row=2, column=1)
-
-file = Button(frame, text="Open file", command=get_file)
-file.grid(row=5, column=0)
-myButton = Button(frame, text="Analyze", command=full_table)
-
-myButton.grid(row=0,column=0)
 
 
 
-frame.grid(row=0, column=0)
+    def show_tables():
+        table_show = Toplevel()
+        table_show.title("Table Frame")
+        table_show.geometry("1000x600")
+        table = Table(table_show, dataframe=df, showtoolbar=True, showstatusbar=True, width=1500, height=800)
+        table.show()
+
+    analyze_file = Button(table_view, text="Show Table", command=show_tables)
+    analyze_file.grid(row=0, column=0)
 
 
 
+    choosed = StringVar()
+    choosed.set("Address Sending Payloads")
+    def choosed_graph():
+        return choosed.get()
 
-root.mainloop()
+    choose_graph = OptionMenu(table_view, choosed, 'Address Sending Payloads', 'Destination Adresses (Bytes Received)', 'Source Ports (Bytes Sent)', 'Destination Ports (Bytes Received)', 'History of bytes by most frequent address', 'Suspicious Destination' )
+    choose_graph.grid(row=3, column=0)
+
+
+
+    def visualizer():
+        vis = Toplevel()
+        vis.title("Visualizer")
+        vis.geometry("1000x600")
+        # sns.set(style="darkgrid")
+
+        graph_type = choosed_graph()
+        if graph_type == 'Address Sending Payloads':
+            source_addresses = df.groupby("src")['payload'].sum()
+            source_addresses.plot(kind='barh',title="Addresses Sending Payloads",figsize=(10,10))
+            plt.show()
+
+        elif graph_type == 'Destination Adresses (Bytes Received)':
+            destination_addresses = df.groupby("dst")['payload'].sum()
+            destination_addresses.plot(kind='barh',title="Destination Adresses (Bytes Received)",figsize=(10,10))
+            plt.show()
+
+        elif graph_type == 'Source Ports (Bytes Sent)':
+            source_ports = df.groupby("sport")['payload'].sum()
+            source_ports.plot(kind='barh',title="Source Ports (Bytes Sent)",figsize=(10,10))
+            plt.show()
+
+        elif graph_type == 'Destination Ports (Bytes Received)':
+            destination_ports = df.groupby("dport")['payload'].sum()
+            destination_ports.plot(kind='barh',title="Destination Ports (Bytes Received)",figsize=(10,10))
+            plt.show()
+
+        # elif graph_type == 'History of bytes by most frequent address':
+        #     frequent_address = df['src'].describe()['top']
+        #     frequent_address_df = df[df['src'] == frequent_address]
+        #     x = frequent_address_df['payload'].tolist()
+        #     sns.barplot(x="time", y="payload", data=frequent_address_df[['payload','time']],label="Total", color="b").set_title("History of bytes sent by most frequent address")
+        #     plt.show()
+
+
+        elif graph_type == 'Suspicious Destination':
+            frequent_address = df['src'].describe()['top']
+            frequent_address_df = df[df['src']==frequent_address]
+
+            # Only display Src Address, Dst Address, and group by Payload 
+            frequent_address_groupby = frequent_address_df[['src','dst','payload']].groupby("dst")['payload'].sum()
+
+            # Plot the Frequent address is speaking to (By Payload)
+            frequent_address_groupby.plot(kind='barh',title="Most Frequent Address is Speaking To (Bytes)",figsize=(10,8))
+
+            # Which address has excahnged the most amount of bytes with most frequent address
+            # suspicious_ip = frequent_address_groupby.sort_values(ascending=False).index[0]
+            # print(suspicious_ip, "May be a suspicious address")
+
+            # Create dataframe with only conversation from most frequent address and suspicious address
+            # suspicious_df = frequent_address_df[frequent_address_df['dst']==suspicious_ip]
+            plt.show()
+
+
+    visualize = Button(table_view, text="Visualize Graph", command=visualizer)
+    visualize.grid(row=2, column=0)
+
+    
+
+
+get_file = Button(menu, text="Open file", command=read_file)
+get_file.pack()
+analyze_file = Button(menu, text="Analyze", command=analyzer)
+analyze_file.pack()
+
+
+menu.mainloop()
