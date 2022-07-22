@@ -69,6 +69,31 @@ def analyzer():
     # Drop old index column
     df = df.drop(columns="index")
 
+    
+
+
+    def show_tables():
+        table_show = Toplevel()
+        table_show.title("Table Frame")
+        table_show.geometry("1000x600")
+        table = Table(table_show, dataframe=df, showtoolbar=True, showstatusbar=True, width=1500, height=800)
+        table.show()
+
+    analyze_file = Button(table_view, text="Show Table", command=show_tables)
+    analyze_file.grid(row=0, column=0)
+
+
+
+    def show_tables():
+        table_show = Toplevel()
+        table_show.title("Table Frame")
+        table_show.geometry("1000x600")
+        table = Table(table_show, dataframe=df, showtoolbar=True, showstatusbar=True, width=1500, height=800)
+        table.show()
+
+    analyze_file = Button(table_view, text="Show Table", command=show_tables)
+    analyze_file.grid(row=0, column=0)
+
 
 
     def show_IPs():
@@ -109,9 +134,6 @@ def analyzer():
 
     choose_graph = OptionMenu(table_view, choosed, 'Address Sending Payloads', 'Destination Adresses (Bytes Received)', 'Source Ports (Bytes Sent)', 'Destination Ports (Bytes Received)', 'History of bytes by most frequent address', 'Suspicious Destination' )
     choose_graph.grid(row=3, column=0)
-
-
-
 
 
 
@@ -172,7 +194,6 @@ def analyzer():
     visualize = Button(table_view, text="Visualize Graph", command=visualizer)
     visualize.grid(row=2, column=0)
 
-    
     def get_url(packet):
         if packet.haslayer(http.HTTPRequest):
             url = packet[http.HTTPRequest].Host + packet[http.HTTPRequest].Path
@@ -211,8 +232,7 @@ def analyzer():
 
     http_password = Button(table_view, text="Find HTTP Password", command=passwordFinder)
     http_password.grid(row=5, column=0)
-
-
+    
     def summarize():
         packets = rdpcap(menu.filename)
         summary = Toplevel()
@@ -253,8 +273,6 @@ Top Destination Address
         summary_text.pack()
     summarizer = Button(table_view, text="Summarize Everything", command=summarize)
     summarizer.grid(row=7, column=0)
-
-
 
 
 get_file = Button(menu, text="Open file", command=read_file)
