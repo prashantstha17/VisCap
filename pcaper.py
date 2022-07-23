@@ -186,12 +186,16 @@ def passwordView():
                 logins['URL'].append(str(url))
                 logins['Login Info'].append(login_info)
 
-    login_dataframe = pd.DataFrame(logins)
-    table_show = Toplevel()
-    table_show.title("Table Frame")
-    table_show.geometry("1000x600")
-    table = Table(table_show, dataframe=login_dataframe, showtoolbar=True, showstatusbar=True, width=1500, height=800)
-    table.show()
+    if len(logins['URL']) == 0:
+        messagebox.showerror("Error", "No login information found")
+    else:
+        login_dataframe = pd.DataFrame(logins)
+        table_show = Toplevel()
+        table_show.title("Table Frame")
+        table_show.geometry("1000x600")
+        table = Table(table_show, dataframe=login_dataframe, showtoolbar=True, showstatusbar=True, width=1500, height=800)
+        table.show()
+    
     
 
 
