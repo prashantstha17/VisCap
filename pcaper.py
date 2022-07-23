@@ -1,4 +1,3 @@
-
 from tkinter import *
 from tkinter import filedialog, messagebox
 from customtkinter import *
@@ -10,16 +9,33 @@ from scapy.all import *
 from scapy.layers.inet import IP
 from scapy.layers.inet import TCP
 from scapy.layers import http
+from PIL import Image, ImageTk
+import os
 
 
+PATH = os.path.dirname(os.path.realpath(__file__))
 
 set_appearance_mode("dark")  # Modes: system (default), light, dark
 set_default_color_theme("blue")  # Themes: blue (default), dark-blue, green
 
 base = CTk()  # create CTk window like you do with the Tk window
-base.geometry("780x750")
+base.geometry("900x790")
 base.title("PCAP analyzer")
+if os.name == "posix":
+    base.iconbitmap(r'@assets/baseIcon.xbm')
+else:
+    base.iconbitmap('assets\baseIcon.ico')
+
 base.resizable(False, False)
+
+image_size = 30
+
+file_entry_image = ImageTk.PhotoImage(
+                    Image.open(PATH + "/assets/folder.webp").resize((image_size, image_size), 
+                    Image.Resampling.LANCZOS))
+file_analyze_image = ImageTk.PhotoImage(
+                    Image.open(PATH + "/assets/analyze.webp").resize((image_size, image_size), 
+                    Image.Resampling.LANCZOS))
 
 frame1 = LabelFrame(base, 
                     highlightbackground="grey", 
@@ -40,12 +56,19 @@ file_entry = CTkEntry(frame1, width=200)
 file_entry.grid(row=0, column=1, padx=10, pady=10)
 
 def filebrowse():
-    filebrowser = filedialog.askopenfilename(initialdir="/home/x90/Documents/college/Year2/Programming And Algorithims/", title="Select a file", filetypes=(("pcap files", "*.pcap"), ("all files", "*.*")))
+    filebrowser = filedialog.askopenfilename(title="Select a file", filetypes=(("pcap files", "*.pcap"), ("all files", "*.*")))
     file_entry.delete(0, END)
     file_entry.insert(0, str(filebrowser))
     return
 
-file_search_button = CTkButton(frame1, text="Browse", command=filebrowse)
+file_search_button = CTkButton(frame1,
+                                text="Browse", 
+                                command=filebrowse, 
+                                image=file_entry_image,
+                                width=190, 
+                                height=40,
+                                hover_color="orange")
+
 file_search_button.grid(row=0, column=2)
 
 analyze_progres = CTkProgressBar(frame1, width=100)
@@ -132,7 +155,13 @@ def analyzer():
             pass
 
 
-file_analyze = CTkButton(frame1, text="Analyze", command=analyzer)
+file_analyze = CTkButton(frame1, 
+                        text="Analyze", 
+                        command=analyzer, 
+                        image=file_analyze_image, 
+                        width=190, 
+                        height=40,
+                        hover_color="orange")
 file_analyze.grid(row=1, column=1)
 
 
@@ -156,7 +185,13 @@ def viewTable():
     table = Table(table_show, dataframe=df, showtoolbar=True, showstatusbar=True, width=1500, height=800)
     table.show()
 
-create_table_button = CTkButton(frame2, text="Pcap Table View", command=viewTable, state=DISABLED)
+create_table_button = CTkButton(frame2, 
+                                text="Pcap Table View", 
+                                command=viewTable, 
+                                state=DISABLED,
+                                width=190, 
+                                height=40,
+                                hover_color="orange")
 create_table_button.grid(row=0, column=1, padx=30, pady=20)
 
 def get_url(packet):
@@ -199,7 +234,13 @@ def passwordView():
     
 
 
-password_button = CTkButton(frame2, text="HTTP Passwords", command=passwordView, state=DISABLED)
+password_button = CTkButton(frame2, 
+                            text="HTTP Passwords", 
+                            command=passwordView, 
+                            state=DISABLED,
+                            width=190, 
+                            height=40,
+                            hover_color="orange")
 password_button.grid(row=0, column=2, padx=80, pady=20)
 
 def summarize():
@@ -255,7 +296,13 @@ Top Destination Address
 
 
 
-summarizer_button = CTkButton(frame2, text="Summarizer", command=summarize, state=DISABLED)
+summarizer_button = CTkButton(frame2, 
+                                text="Summarizer", 
+                                command=summarize, 
+                                state=DISABLED,
+                                width=190, 
+                                height=40,
+                                hover_color="orange")
 summarizer_button.grid(row=0, column=4, padx=10, pady=20)
 
 def show_columns():
@@ -268,7 +315,14 @@ def show_columns():
     cols_label = Label(show_cols, text=cols)
     cols_label.pack()
     
-view_cols = CTkButton(frame2, text="View Columns", command=show_columns, state=DISABLED)
+view_cols = CTkButton(frame2, 
+                    text="View Columns", 
+                    command=show_columns, 
+                    state=DISABLED,
+                    width=190, 
+                    height=40,
+                    hover_color="orange")
+
 view_cols.grid(row=3, column=2,pady=20)
 
 def preferred_table():
@@ -291,7 +345,13 @@ def preferred_table():
 choosed_cols = CTkEntry(frame2, width=200)
 choosed_cols.grid(row=1, column=2, padx=10, pady=10)
 
-choosed_cols_button = CTkButton(frame2, text="Choose columns", command=preferred_table, state=DISABLED)
+choosed_cols_button = CTkButton(frame2, 
+                                text="Choose columns", 
+                                command=preferred_table, 
+                                state=DISABLED,
+                                width=190, 
+                                height=40,
+                                hover_color="orange")
 choosed_cols_button.grid(row=2, column=2)
 
         
@@ -350,14 +410,23 @@ def visualize():
         plt.show()
 
 
-graph_drop_down = CTkOptionMenu(master=frame3, command=choosed_graph, values=['Address Sending Payloads', 'Destination Adresses (Bytes Received)', 'Source Ports (Bytes Sent)', 'Destination Ports (Bytes Received)', 'Suspicious Destination'])
+graph_drop_down = CTkOptionMenu(master=frame3, 
+                                command=choosed_graph, 
+                                values=['Address Sending Payloads', 'Destination Adresses (Bytes Received)', 'Source Ports (Bytes Sent)', 'Destination Ports (Bytes Received)', 'Suspicious Destination'],
+                                width=170,
+                                height=30)
 graph_drop_down.set("Address Sending Payloads")
 graph_drop_down.grid(row=0, column=0, padx=10, pady=20)
 
 
-graph_view_button = CTkButton(frame3, text="Visaulize Graph", command=visualize, state=DISABLED)
+graph_view_button = CTkButton(frame3, 
+                                text="Visaulize Graph", 
+                                command=visualize, 
+                                state=DISABLED,
+                                width=190, 
+                                height=40,
+                                hover_color="orange")
 graph_view_button.grid(row=0, column=1, padx=10, pady=20)
-
 
 
 base.mainloop()
