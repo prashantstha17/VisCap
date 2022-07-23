@@ -24,7 +24,7 @@ base.title("PCAP analyzer")
 if os.name == "posix":
     base.iconbitmap(r'@assets/baseIcon.xbm')
 else:
-    base.iconbitmap('assets\baseIcon.ico')
+    base.iconbitmap('assets/baseIcon.ico')
 
 base.resizable(False, False)
 
