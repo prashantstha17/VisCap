@@ -20,7 +20,7 @@ set_default_color_theme("blue")  # Themes: blue (default), dark-blue, green
 
 base = CTk()  # create CTk window like you do with the Tk window
 base.geometry("900x790")
-base.title("PCAP analyzer")
+base.title("Network Packet Analyzer | Author: @PrashantShrestha")
 if os.name == "posix":
     base.iconbitmap(r'@assets/baseIcon.xbm')
 else:
