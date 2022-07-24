@@ -20,13 +20,12 @@ set_default_color_theme("blue")  # Themes: blue (default), dark-blue, green
 
 base = CTk()  # create CTk window like you do with the Tk window
 base.geometry("900x790")
-base.title("Network Packet Analyzer | Author: @PrashantShrestha")
+base.title("VisCap (Network Packet Analyzer) | Author: @PrashantShrestha")
+base.resizable(False, False)
 if os.name == "posix":
     base.iconbitmap(r'@assets/baseIcon.xbm')
 else:
     base.iconbitmap('assets/baseIcon.ico')
-
-base.resizable(False, False)
 
 image_size = 30
 
@@ -73,15 +72,13 @@ file_search_button.grid(row=0, column=2)
 
 analyze_progres = CTkProgressBar(frame1, width=100)
 analyze_progres.grid(row=1, column=2)
-analyze_progres.set(0)
+analyze_progres.set(0.35)
 analyze_progres.configure(fg_color="white",
                       progress_color="green")
 
 def analyzer():
-    # table_view = Toplevel()
-    # table_view.title("Analyzed Pcap")
-    # table_view.geometry("800x500")
     analyze_progres.set(0)
+    base.update_idletasks()
     if file_entry.get() == "":
         messagebox.showerror("Error", "Please enter a path to a pcap file")
 
@@ -138,7 +135,7 @@ def analyzer():
                 # Drop old index column
                 df = df.drop(columns="index")
                 
-                analyze_progres.set(1000)
+                analyze_progres.set(1)
                 
                 create_table_button.configure(state=NORMAL)
                 password_button.configure(state=NORMAL)
