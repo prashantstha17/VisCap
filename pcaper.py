@@ -222,7 +222,7 @@ def passwordView():
         messagebox.showerror("Error", "No login information found")
     else:
         login_dataframe = pd.DataFrame(logins)
-        table_show = Toplevel()
+        table_show = CTkToplevel()
         table_show.title("Table Frame")
         table_show.geometry("1000x600")
         table = Table(table_show, dataframe=login_dataframe, showtoolbar=True, showstatusbar=True, width=1500, height=800)
@@ -241,7 +241,7 @@ password_button = CTkButton(frame2,
 password_button.grid(row=0, column=2, padx=80, pady=20)
 
 def summarize():
-    summary = Toplevel()
+    summary = CTkToplevel()
     summary.title("Summary")
     summary.geometry("1000x600")
 
