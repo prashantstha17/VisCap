@@ -38,19 +38,6 @@ The tools I have used for this project are as shown below:
 <br>
 <br>
 
-# Links
-
-The links you can go through:
-
-- Repository: https://github.com/softwarica-github/coursework2-prashantstha17
-- Youtube video: https://youtu.be/7s_s0yk2Vq0
-- A-packets: https://apackets.com/
-
-
-<br>
-<br>
-
-
 
 
 <p align="center"><b><u><i> Thank you!!. Stars are appreciated. </i></u></b><p>
