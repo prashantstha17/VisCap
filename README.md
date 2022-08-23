@@ -50,10 +50,6 @@ The links you can go through:
 <br>
 <br>
 
-### Prashant Shrestha
-##### Student ID: 210160
-##### Batch: 30 ETH
-##### Email-ID : prashant.stha246810@gmail.com
 
 
 
