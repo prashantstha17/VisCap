@@ -9,7 +9,7 @@ VisCap is used for newtork analysis. It has the feature to visualize the data or
 Install VisCap with terminal
 
 ```bash
-  git clone https://github.com/softwarica-github/coursework2-prashantstha17.git
+  git clone https://github.com/prashantstha17/VisCap
 ```
 Run VisCap
 ```bash
